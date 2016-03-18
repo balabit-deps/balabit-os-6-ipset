@@ -1,0 +1,7 @@
+Tests: regression
+Depends:
+ @,
+ autopkgtest,
+ netmask,
+ sendip,
+Restrictions: needs-root isolation-machine allow-stderr

@@ -1,0 +1,1210 @@
+Description: Adjust test scripts for Debian 
+ The test failed in Debian due to the lack of some features that are not
+ included in the current Debian Linux kernel.
+Author: Neutron Soutmun <neo.neutron@gmail.com>
+Forwarded: not-needed 
+Last-Update: 2016-03-21
+
+Index: ipset/tests/bitmap:ip.t.list0
+===================================================================
+--- ipset.orig/tests/bitmap:ip.t.list0
++++ ipset/tests/bitmap:ip.t.list0
+@@ -3,6 +3,5 @@ Type: bitmap:ip
+ Header: range 2.0.0.1-2.1.0.0 timeout 5
+ Size in memory: 532640
+ References: 0
+-Number of entries: 1
+ Members:
+ 2.1.0.0 timeout 0
+Index: ipset/tests/bitmap:ip.t.list1
+===================================================================
+--- ipset.orig/tests/bitmap:ip.t.list1
++++ ipset/tests/bitmap:ip.t.list1
+@@ -3,6 +3,5 @@ Type: bitmap:ip
+ Header: range 2.0.0.0-2.0.255.255 timeout 5
+ Size in memory: 532640
+ References: 0
+-Number of entries: 1
+ Members:
+ 2.0.0.0 timeout 0
+Index: ipset/tests/bitmap:ip.t.list2
+===================================================================
+--- ipset.orig/tests/bitmap:ip.t.list2
++++ ipset/tests/bitmap:ip.t.list2
+@@ -3,6 +3,5 @@ Type: bitmap:ip
+ Header: range 10.0.0.0-10.255.255.255 netmask 24 timeout 5
+ Size in memory: 532640
+ References: 0
+-Number of entries: 1
+ Members:
+ 10.255.255.0 timeout 0
+Index: ipset/tests/bitmap:ip.t.list3
+===================================================================
+--- ipset.orig/tests/bitmap:ip.t.list3
++++ ipset/tests/bitmap:ip.t.list3
+@@ -3,7 +3,6 @@ Type: bitmap:ip
+ Header: range 0.0.0.0-255.255.255.255 netmask 16 timeout 5
+ Size in memory: 532640
+ References: 0
+-Number of entries: 2
+ Members:
+ 0.0.0.0 timeout 0
+ 255.255.0.0 timeout 0
+Index: ipset/tests/bitmap:ip.t.list4
+===================================================================
+--- ipset.orig/tests/bitmap:ip.t.list4
++++ ipset/tests/bitmap:ip.t.list4
+@@ -3,7 +3,6 @@ Type: bitmap:ip
+ Header: range 2.0.0.1-2.1.0.0 timeout x
+ Size in memory: 532640
+ References: 0
+-Number of entries: 6
+ Members:
+ 2.0.0.1 timeout x
+ 2.0.0.128 timeout x
+Index: ipset/tests/bitmap:ip.t.list5
+===================================================================
+--- ipset.orig/tests/bitmap:ip.t.list5
++++ ipset/tests/bitmap:ip.t.list5
+@@ -3,7 +3,6 @@ Type: bitmap:ip
+ Header: range 2.0.0.0-2.0.255.255 timeout x
+ Size in memory: 532640
+ References: 0
+-Number of entries: 2
+ Members:
+ 2.0.0.0 timeout x
+ 2.0.255.255 timeout x
+Index: ipset/tests/bitmap:ip.t.list6
+===================================================================
+--- ipset.orig/tests/bitmap:ip.t.list6
++++ ipset/tests/bitmap:ip.t.list6
+@@ -3,7 +3,6 @@ Type: bitmap:ip
+ Header: range 10.0.0.0-10.255.255.255 netmask 24 timeout x
+ Size in memory: 532640
+ References: 0
+-Number of entries: 258
+ Members:
+ 10.0.0.0 timeout x
+ 10.8.0.0 timeout x
+Index: ipset/tests/check_cidrs.sh
+===================================================================
+--- ipset.orig/tests/check_cidrs.sh
++++ ipset/tests/check_cidrs.sh
+@@ -10,14 +10,14 @@ $ipset n test hash:net
+ for x in `seq 1 32`; do
+     $ipset a test 10.0.0.0/$x
+     n=`$ipset l test | wc -l`
+-    n=$((n - 8))
++    n=$((n - 7))
+     test $n -eq $x || exit 1
+ done
+ for x in `seq 32 -1 1`; do
+     $ipset d test 10.0.0.0/$x
+     n=`$ipset l test | wc -l`
+     # We deleted one element
+-    n=$((n - 8 + 1))
++    n=$((n - 7 + 1))
+     test $n -eq $x || exit 1
+ done
+ $ipset x test
+Index: ipset/tests/cidr.sh
+===================================================================
+--- ipset.orig/tests/cidr.sh
++++ ipset/tests/cidr.sh
+@@ -35,7 +35,7 @@ NETS="0.0.0.0/1
+ 255.255.255.252/31
+ 255.255.255.254/32"
+ 
+-ipset="../src/ipset"
++ipset=${IPSET_BIN:-../src/ipset}
+ 
+ case "$1" in
+ net)
+Index: ipset/tests/comment.t.list0
+===================================================================
+--- ipset.orig/tests/comment.t.list0
++++ ipset/tests/comment.t.list0
+@@ -3,6 +3,5 @@ Type: bitmap:ip
+ Header: range 2.0.0.1-2.1.0.0 comment
+ Size in memory: 532640
+ References: 0
+-Number of entries: 1
+ Members:
+ 2.0.0.1 comment "text message"
+Index: ipset/tests/comment.t.list1
+===================================================================
+--- ipset.orig/tests/comment.t.list1
++++ ipset/tests/comment.t.list1
+@@ -3,7 +3,6 @@ Type: bitmap:ip
+ Header: range 2.0.0.1-2.1.0.0 comment
+ Size in memory: 532640
+ References: 0
+-Number of entries: 255
+ Members:
+ 2.0.0.1 comment "text message 1"
+ 2.0.0.2 comment "text message 2"
+Index: ipset/tests/comment.t.list11
+===================================================================
+--- ipset.orig/tests/comment.t.list11
++++ ipset/tests/comment.t.list11
+@@ -3,7 +3,6 @@ Type: bitmap:ip
+ Header: range 2.0.0.1-2.1.0.0 timeout x comment
+ Size in memory: 1056928
+ References: 0
+-Number of entries: 510
+ Members:
+ 2.0.0.1 timeout x comment "text message 1"
+ 2.0.0.2 timeout x comment "text message 2"
+Index: ipset/tests/comment.t.list12
+===================================================================
+--- ipset.orig/tests/comment.t.list12
++++ ipset/tests/comment.t.list12
+@@ -3,7 +3,6 @@ Type: bitmap:ip
+ Header: range 2.0.0.1-2.1.0.0 timeout x comment
+ Size in memory: 1056928
+ References: 0
+-Number of entries: 510
+ Members:
+ 2.0.1.1 timeout x comment "text message 1"
+ 2.0.1.2 timeout x comment "text message 2"
+Index: ipset/tests/comment.t.list2
+===================================================================
+--- ipset.orig/tests/comment.t.list2
++++ ipset/tests/comment.t.list2
+@@ -3,7 +3,6 @@ Type: hash:net,net
+ Header: family inet hashsize 128 maxelem 65536 comment
+ Size in memory: 1288
+ References: 0
+-Number of entries: 4
+ Members:
+ 1.1.1.1,1.1.1.2 comment "text 1.1.1.1/32,1.1.1.2/32"
+ 192.168.68.64/27,192.168.129.64/27 comment "text 192.168.68.69/27,192.168.129.69/27"
+Index: ipset/tests/comment.t.list21
+===================================================================
+--- ipset.orig/tests/comment.t.list21
++++ ipset/tests/comment.t.list21
+@@ -3,7 +3,6 @@ Type: hash:ip
+ Header: family inet hashsize 1024 maxelem 65536 timeout x comment
+ Size in memory: 95168
+ References: 0
+-Number of entries: 512
+ Members:
+ 2.0.0.0 timeout x comment "text message 0"
+ 2.0.0.1 timeout x comment "text message 1"
+Index: ipset/tests/comment.t.list22
+===================================================================
+--- ipset.orig/tests/comment.t.list22
++++ ipset/tests/comment.t.list22
+@@ -3,7 +3,6 @@ Type: hash:ip
+ Header: family inet hashsize 1024 maxelem 65536 timeout x comment
+ Size in memory: 98256
+ References: 0
+-Number of entries: 512
+ Members:
+ 2.0.1.0 timeout x comment "text message 0"
+ 2.0.1.1 timeout x comment "text message 1"
+Index: ipset/tests/comment.t.list3
+===================================================================
+--- ipset.orig/tests/comment.t.list3
++++ ipset/tests/comment.t.list3
+@@ -3,7 +3,6 @@ Type: hash:ip
+ Header: family inet hashsize 1024 maxelem 65536
+ Size in memory: 152
+ References: 1
+-Number of entries: 0
+ Members:
+ 
+ Name: b
+@@ -11,7 +10,6 @@ Type: hash:ip
+ Header: family inet hashsize 1024 maxelem 65536
+ Size in memory: 152
+ References: 1
+-Number of entries: 0
+ Members:
+ 
+ Name: c
+@@ -19,7 +17,6 @@ Type: hash:ip
+ Header: family inet hashsize 1024 maxelem 65536
+ Size in memory: 152
+ References: 1
+-Number of entries: 0
+ Members:
+ 
+ Name: test
+@@ -27,7 +24,6 @@ Type: list:set
+ Header: size 8 comment
+ Size in memory: 288
+ References: 0
+-Number of entries: 3
+ Members:
+ a comment "a set comment"
+ b comment "b set comment"
+Index: ipset/tests/hash:ip,mark.t.list0
+===================================================================
+--- ipset.orig/tests/hash:ip,mark.t.list0
++++ ipset/tests/hash:ip,mark.t.list0
+@@ -3,7 +3,6 @@ Type: hash:ip,mark
+ Header: family inet markmask 0xffffffff hashsize 1024 maxelem 65536 timeout x
+ Size in memory: 640
+ References: 0
+-Number of entries: 4
+ Members:
+ 2.0.0.0,0x00000005 timeout x
+ 2.0.0.1,0x00000005 timeout x
+Index: ipset/tests/hash:ip,mark.t.list1
+===================================================================
+--- ipset.orig/tests/hash:ip,mark.t.list1
++++ ipset/tests/hash:ip,mark.t.list1
+@@ -3,5 +3,4 @@ Type: hash:ip,mark
+ Header: family inet markmask 0xffffffff hashsize 1024 maxelem 65536 timeout 5
+ Size in memory: 640
+ References: 0
+-Number of entries: 4
+ Members:
+Index: ipset/tests/hash:ip,port,ip.t.list0
+===================================================================
+--- ipset.orig/tests/hash:ip,port,ip.t.list0
++++ ipset/tests/hash:ip,port,ip.t.list0
+@@ -3,7 +3,6 @@ Type: hash:ip,port,ip
+ Header: family inet hashsize 1024 maxelem 65536 timeout x
+ Size in memory: 840
+ References: 0
+-Number of entries: 4
+ Members:
+ 2.0.0.0,tcp:5,1.1.1.1 timeout x
+ 2.0.0.1,tcp:5,1.1.1.1 timeout x
+Index: ipset/tests/hash:ip,port,ip.t.list1
+===================================================================
+--- ipset.orig/tests/hash:ip,port,ip.t.list1
++++ ipset/tests/hash:ip,port,ip.t.list1
+@@ -3,5 +3,4 @@ Type: hash:ip,port,ip
+ Header: family inet hashsize 1024 maxelem 65536 timeout 5
+ Size in memory: 840
+ References: 0
+-Number of entries: 4
+ Members:
+Index: ipset/tests/hash:ip,port,net.t.list0
+===================================================================
+--- ipset.orig/tests/hash:ip,port,net.t.list0
++++ ipset/tests/hash:ip,port,net.t.list0
+@@ -3,7 +3,6 @@ Type: hash:ip,port,net
+ Header: family inet hashsize 1024 maxelem 65536 timeout x
+ Size in memory: 1096
+ References: 0
+-Number of entries: 4
+ Members:
+ 2.0.0.0,tcp:5,192.168.0.0/25 timeout x
+ 2.0.0.1,tcp:5,192.168.0.0/24 timeout x
+Index: ipset/tests/hash:ip,port.t.list0
+===================================================================
+--- ipset.orig/tests/hash:ip,port.t.list0
++++ ipset/tests/hash:ip,port.t.list0
+@@ -3,7 +3,6 @@ Type: hash:ip,port
+ Header: family inet hashsize 1024 maxelem 65536 timeout x
+ Size in memory: 640
+ References: 0
+-Number of entries: 4
+ Members:
+ 2.0.0.0,tcp:5 timeout x
+ 2.0.0.1,tcp:5 timeout x
+Index: ipset/tests/hash:ip,port.t.list1
+===================================================================
+--- ipset.orig/tests/hash:ip,port.t.list1
++++ ipset/tests/hash:ip,port.t.list1
+@@ -3,5 +3,4 @@ Type: hash:ip,port
+ Header: family inet hashsize 1024 maxelem 65536 timeout 5
+ Size in memory: 640
+ References: 0
+-Number of entries: 4
+ Members:
+Index: ipset/tests/hash:ip,port.t.list2
+===================================================================
+--- ipset.orig/tests/hash:ip,port.t.list2
++++ ipset/tests/hash:ip,port.t.list2
+@@ -3,7 +3,6 @@ Type: hash:ip,port
+ Header: family inet hashsize 1024 maxelem 65536
+ Size in memory: 320
+ References: 0
+-Number of entries: 3
+ Members:
+ 2.0.0.1,tcp:80
+ 2.0.0.1,udp:80
+Index: ipset/tests/hash:ip.t.list0
+===================================================================
+--- ipset.orig/tests/hash:ip.t.list0
++++ ipset/tests/hash:ip.t.list0
+@@ -1,8 +1,7 @@
+ Name: test
+ Type: hash:ip
+ Header: family inet hashsize 128 maxelem 65536 timeout 5
+-Size in memory: 352
++Size in memory: 320
+ References: 0
+-Number of entries: 2
+ Members:
+ 192.168.68.69 timeout 0
+Index: ipset/tests/hash:ip.t.list1
+===================================================================
+--- ipset.orig/tests/hash:ip.t.list1
++++ ipset/tests/hash:ip.t.list1
+@@ -3,6 +3,5 @@ Type: hash:ip
+ Header: family inet hashsize 128 maxelem 65536 netmask 24 timeout 5
+ Size in memory: 464
+ References: 0
+-Number of entries: 3
+ Members:
+ 200.100.10.0 timeout 0
+Index: ipset/tests/hash:ip.t.list2
+===================================================================
+--- ipset.orig/tests/hash:ip.t.list2
++++ ipset/tests/hash:ip.t.list2
+@@ -1,9 +1,8 @@
+ Name: test
+ Type: hash:ip
+ Header: family inet hashsize 128 maxelem 65536 timeout x
+-Size in memory: 352
++Size in memory: 320
+ References: 0
+-Number of entries: 2
+ Members:
+ 192.168.68.69 timeout x
+ 2.0.0.1 timeout x
+Index: ipset/tests/hash:ip.t.list3
+===================================================================
+--- ipset.orig/tests/hash:ip.t.list3
++++ ipset/tests/hash:ip.t.list3
+@@ -1,9 +1,8 @@
+ Name: test
+ Type: hash:ip
+ Header: family inet hashsize 128 maxelem 65536 netmask 24 timeout x
+-Size in memory: 464
++Size in memory: 416
+ References: 0
+-Number of entries: 3
+ Members:
+ 192.168.68.0 timeout x
+ 2.0.0.0 timeout x
+Index: ipset/tests/hash:ip6,mark.t.list0
+===================================================================
+--- ipset.orig/tests/hash:ip6,mark.t.list0
++++ ipset/tests/hash:ip6,mark.t.list0
+@@ -3,7 +3,6 @@ Type: hash:ip,mark
+ Header: family inet6 markmask 0xffffffff hashsize 1024 maxelem 65536 timeout x
+ Size in memory: 1088
+ References: 0
+-Number of entries: 4
+ Members:
+ 2:1::,0x00000080 timeout x
+ 2:1::1,0x00000080 timeout x
+Index: ipset/tests/hash:ip6,mark.t.list1
+===================================================================
+--- ipset.orig/tests/hash:ip6,mark.t.list1
++++ ipset/tests/hash:ip6,mark.t.list1
+@@ -3,5 +3,4 @@ Type: hash:ip,mark
+ Header: family inet6 markmask 0xffffffff hashsize 1024 maxelem 65536 timeout 5
+ Size in memory: 1088
+ References: 0
+-Number of entries: 4
+ Members:
+Index: ipset/tests/hash:ip6,port,ip6.t.list0
+===================================================================
+--- ipset.orig/tests/hash:ip6,port,ip6.t.list0
++++ ipset/tests/hash:ip6,port,ip6.t.list0
+@@ -4,7 +4,6 @@ Header: family inet6 hashsize 1024 maxel
+ Size in memory: 1608
+ References: 0
+ Size in memory: 9104
+-Number of entries: 4
+ Members:
+ 2:1::,tcp:128,2:2:2::2 timeout x
+ 2:1::1,tcp:128,2:2:2::2 timeout x
+Index: ipset/tests/hash:ip6,port,ip6.t.list1
+===================================================================
+--- ipset.orig/tests/hash:ip6,port,ip6.t.list1
++++ ipset/tests/hash:ip6,port,ip6.t.list1
+@@ -3,5 +3,4 @@ Type: hash:ip,port,ip
+ Header: family inet6 hashsize 1024 maxelem 65536 timeout 5
+ Size in memory: 1608
+ References: 0
+-Number of entries: 4
+ Members:
+Index: ipset/tests/hash:ip6,port,net6.t.list0
+===================================================================
+--- ipset.orig/tests/hash:ip6,port,net6.t.list0
++++ ipset/tests/hash:ip6,port,net6.t.list0
+@@ -3,7 +3,6 @@ Type: hash:ip,port,net
+ Header: family inet6 hashsize 1024 maxelem 65536
+ Size in memory: 1864
+ References: 0
+-Number of entries: 4
+ Members:
+ 2:1::,tcp:128,::/12
+ 2:1::1,tcp:128,::/12
+Index: ipset/tests/hash:ip6,port.t.list0
+===================================================================
+--- ipset.orig/tests/hash:ip6,port.t.list0
++++ ipset/tests/hash:ip6,port.t.list0
+@@ -3,7 +3,6 @@ Type: hash:ip,port
+ Header: family inet6 hashsize 1024 maxelem 65536 timeout x
+ Size in memory: 1088
+ References: 0
+-Number of entries: 4
+ Members:
+ 2:1::,tcp:128 timeout x
+ 2:1::1,tcp:128 timeout x
+Index: ipset/tests/hash:ip6,port.t.list1
+===================================================================
+--- ipset.orig/tests/hash:ip6,port.t.list1
++++ ipset/tests/hash:ip6,port.t.list1
+@@ -3,5 +3,4 @@ Type: hash:ip,port
+ Header: family inet6 hashsize 1024 maxelem 65536 timeout 5
+ Size in memory: 1088
+ References: 0
+-Number of entries: 4
+ Members:
+Index: ipset/tests/hash:ip6.t.list0
+===================================================================
+--- ipset.orig/tests/hash:ip6.t.list0
++++ ipset/tests/hash:ip6.t.list0
+@@ -3,6 +3,5 @@ Type: hash:ip
+ Header: family inet6 hashsize 128 maxelem 65536 timeout 5
+ Size in memory: 512
+ References: 0
+-Number of entries: 2
+ Members:
+ 192:168:68::69 timeout 0
+Index: ipset/tests/hash:ip6.t.list1
+===================================================================
+--- ipset.orig/tests/hash:ip6.t.list1
++++ ipset/tests/hash:ip6.t.list1
+@@ -3,6 +3,5 @@ Type: hash:ip
+ Header: family inet6 hashsize 128 maxelem 65536 netmask 64 timeout 5
+ Size in memory: 704
+ References: 0
+-Number of entries: 3
+ Members:
+ 200:100:10:: timeout 0
+Index: ipset/tests/hash:ip6.t.list2
+===================================================================
+--- ipset.orig/tests/hash:ip6.t.list2
++++ ipset/tests/hash:ip6.t.list2
+@@ -1,9 +1,8 @@
+ Name: test
+ Type: hash:ip
+ Header: family inet6 hashsize 128 maxelem 65536 timeout x
+-Size in memory: 512
++Size in memory: 384
+ References: 0
+-Number of entries: 2
+ Members:
+ 192:168:68::69 timeout x
+ 2::1 timeout x
+Index: ipset/tests/hash:ip6.t.list3
+===================================================================
+--- ipset.orig/tests/hash:ip6.t.list3
++++ ipset/tests/hash:ip6.t.list3
+@@ -1,9 +1,8 @@
+ Name: test
+ Type: hash:ip
+ Header: family inet6 hashsize 128 maxelem 65536 netmask 64 timeout x
+-Size in memory: 704
++Size in memory: 512
+ References: 0
+-Number of entries: 3
+ Members:
+ 192:168:68:: timeout x
+ 200:100:10:: timeout x
+Index: ipset/tests/hash:mac.t.list0
+===================================================================
+--- ipset.orig/tests/hash:mac.t.list0
++++ ipset/tests/hash:mac.t.list0
+@@ -3,6 +3,5 @@ Type: hash:mac
+ Header: hashsize 128 maxelem 65536 timeout 5
+ Size in memory: 384
+ References: 0
+-Number of entries: 2
+ Members:
+ 00:0A:00:00:00:00 timeout 0
+Index: ipset/tests/hash:mac.t.list1
+===================================================================
+--- ipset.orig/tests/hash:mac.t.list1
++++ ipset/tests/hash:mac.t.list1
+@@ -3,7 +3,6 @@ Type: hash:mac
+ Header: hashsize 1024 maxelem 65536 skbinfo
+ Size in memory: 1088
+ References: 0
+-Number of entries: 6
+ Members:
+ 01:02:03:04:05:06 skbmark 0x123456
+ 01:02:03:04:05:07 skbmark 0x1234ab/0xffff
+Index: ipset/tests/hash:mac.t.list2
+===================================================================
+--- ipset.orig/tests/hash:mac.t.list2
++++ ipset/tests/hash:mac.t.list2
+@@ -3,7 +3,6 @@ Type: hash:mac
+ Header: hashsize 128 maxelem 65536 timeout x
+ Size in memory: 384
+ References: 0
+-Number of entries: 2
+ Members:
+ 00:00:00:00:02:00 timeout x
+ 00:0A:00:00:00:00 timeout x
+Index: ipset/tests/hash:mac.t.list3
+===================================================================
+--- ipset.orig/tests/hash:mac.t.list3
++++ ipset/tests/hash:mac.t.list3
+@@ -3,7 +3,6 @@ Type: hash:mac
+ Header: hashsize 1024 maxelem 2 skbinfo
+ Size in memory: 448
+ References: 0
+-Number of entries: 2
+ Members:
+ 01:02:03:04:05:06 skbprio 1:10
+ 01:02:03:04:05:07 skbprio 1:12 skbqueue 8
+Index: ipset/tests/hash:net,iface.t
+===================================================================
+--- ipset.orig/tests/hash:net,iface.t
++++ ipset/tests/hash:net,iface.t
+@@ -131,7 +131,7 @@
+ # Add clashing elements
+ 0 (set -e; for x in `seq 0 63`; do ipset add test 10.0.0.0/16,eth$x; done)
+ # Check listing
+-0 n=`ipset list test | grep -v Revision: | wc -l` && test $n -eq 71
++0 n=`ipset list test | grep -v Revision: | wc -l` && test $n -eq 70
+ # Delete test set
+ 0 ipset destroy test
+ # Check all possible CIDR values
+Index: ipset/tests/hash:net,iface.t.list0
+===================================================================
+--- ipset.orig/tests/hash:net,iface.t.list0
++++ ipset/tests/hash:net,iface.t.list0
+@@ -3,7 +3,6 @@ Type: hash:net,iface
+ Header: family inet hashsize 128 maxelem 65536
+ Size in memory: 928
+ References: 0
+-Number of entries: 4
+ Members:
+ 1.1.1.1,eth0
+ 192.168.68.64/27,eth1
+Index: ipset/tests/hash:net,iface.t.list1
+===================================================================
+--- ipset.orig/tests/hash:net,iface.t.list1
++++ ipset/tests/hash:net,iface.t.list1
+@@ -3,7 +3,6 @@ Type: hash:net,iface
+ Header: family inet hashsize 1024 maxelem 65536
+ Size in memory: 3872
+ References: 0
+-Number of entries: 27
+ Members:
+ 192.0.0.0/10,eth10
+ 192.0.0.0/11,eth11
+Index: ipset/tests/hash:net,iface.t.list2
+===================================================================
+--- ipset.orig/tests/hash:net,iface.t.list2
++++ ipset/tests/hash:net,iface.t.list2
+@@ -3,7 +3,6 @@ Type: hash:net,iface
+ Header: family inet hashsize 1024 maxelem 65536
+ Size in memory: 928
+ References: 0
+-Number of entries: 4
+ Members:
+ 10.2.0.0/24,eth0
+ 10.2.1.0/29,eth0
+Index: ipset/tests/hash:net,net.t.list0
+===================================================================
+--- ipset.orig/tests/hash:net,net.t.list0
++++ ipset/tests/hash:net,net.t.list0
+@@ -3,7 +3,6 @@ Type: hash:net,net
+ Header: family inet hashsize 128 maxelem 65536 timeout x
+ Size in memory: 1288
+ References: 0
+-Number of entries: 4
+ Members:
+ 1.1.1.1,1.1.1.2 timeout x
+ 192.168.68.64/27,192.168.129.64/27 timeout x
+Index: ipset/tests/hash:net,net.t.list1
+===================================================================
+--- ipset.orig/tests/hash:net,net.t.list1
++++ ipset/tests/hash:net,net.t.list1
+@@ -3,5 +3,4 @@ Type: hash:net,net
+ Header: family inet hashsize 128 maxelem 65536 timeout 5
+ Size in memory: 1288
+ References: 0
+-Number of entries: 4
+ Members:
+Index: ipset/tests/hash:net,net.t.list2
+===================================================================
+--- ipset.orig/tests/hash:net,net.t.list2
++++ ipset/tests/hash:net,net.t.list2
+@@ -3,7 +3,6 @@ Type: hash:net,net
+ Header: family inet hashsize 1024 maxelem 65536
+ Size in memory: 2056
+ References: 0
+-Number of entries: 16
+ Members:
+ 10.2.0.0/24,10.3.0.0/24
+ 10.2.0.0/24,10.3.1.0/29
+Index: ipset/tests/hash:net,port,net.t.list0
+===================================================================
+--- ipset.orig/tests/hash:net,port,net.t.list0
++++ ipset/tests/hash:net,port,net.t.list0
+@@ -3,7 +3,6 @@ Type: hash:net,port,net
+ Header: family inet hashsize 1024 maxelem 65536 timeout x
+ Size in memory: 1288
+ References: 0
+-Number of entries: 4
+ Members:
+ 2.0.0.0/24,tcp:5,192.168.0.0/24 timeout x
+ 2.0.0.0/24,tcp:5,192.168.0.0/25 timeout x
+Index: ipset/tests/hash:net,port.t.list0
+===================================================================
+--- ipset.orig/tests/hash:net,port.t.list0
++++ ipset/tests/hash:net,port.t.list0
+@@ -3,7 +3,6 @@ Type: hash:net,port
+ Header: family inet hashsize 128 maxelem 65536 timeout x
+ Size in memory: 1024
+ References: 0
+-Number of entries: 5
+ Members:
+ 1.1.1.1,tcp:5 timeout x
+ 192.168.68.64/27,tcp:8 timeout x
+Index: ipset/tests/hash:net,port.t.list1
+===================================================================
+--- ipset.orig/tests/hash:net,port.t.list1
++++ ipset/tests/hash:net,port.t.list1
+@@ -3,5 +3,4 @@ Type: hash:net,port
+ Header: family inet hashsize 128 maxelem 65536 timeout 5
+ Size in memory: 1024
+ References: 0
+-Number of entries: 4
+ Members:
+Index: ipset/tests/hash:net.t.list0
+===================================================================
+--- ipset.orig/tests/hash:net.t.list0
++++ ipset/tests/hash:net.t.list0
+@@ -3,7 +3,6 @@ Type: hash:net
+ Header: family inet hashsize 128 maxelem 65536 timeout x
+ Size in memory: 896
+ References: 0
+-Number of entries: 4
+ Members:
+ 1.1.1.1 timeout x
+ 192.168.68.64/27 timeout x
+Index: ipset/tests/hash:net.t.list1
+===================================================================
+--- ipset.orig/tests/hash:net.t.list1
++++ ipset/tests/hash:net.t.list1
+@@ -3,5 +3,4 @@ Type: hash:net
+ Header: family inet hashsize 128 maxelem 65536 timeout 5
+ Size in memory: 895
+ References: 0
+-Number of entries: 4
+ Members:
+Index: ipset/tests/hash:net.t.list2
+===================================================================
+--- ipset.orig/tests/hash:net.t.list2
++++ ipset/tests/hash:net.t.list2
+@@ -3,7 +3,6 @@ Type: hash:net
+ Header: family inet hashsize 1024 maxelem 65536
+ Size in memory: 640
+ References: 0
+-Number of entries: 4
+ Members:
+ 10.2.0.0/24
+ 10.2.1.0/29
+Index: ipset/tests/hash:net6,net6.t.list0
+===================================================================
+--- ipset.orig/tests/hash:net6,net6.t.list0
++++ ipset/tests/hash:net6,net6.t.list0
+@@ -3,7 +3,6 @@ Type: hash:net,net
+ Header: family inet6 hashsize 128 maxelem 65536 timeout x
+ Size in memory: 3144
+ References: 0
+-Number of entries: 4
+ Members:
+ 192:160::/27,172:16:68::/48 timeout x
+ 1:1:1::1,2:2:2::2 timeout x
+Index: ipset/tests/hash:net6,net6.t.list1
+===================================================================
+--- ipset.orig/tests/hash:net6,net6.t.list1
++++ ipset/tests/hash:net6,net6.t.list1
+@@ -3,5 +3,4 @@ Type: hash:net,net
+ Header: family inet6 hashsize 128 maxelem 65536 timeout 5
+ Size in memory: 3144
+ References: 0
+-Number of entries: 4
+ Members:
+Index: ipset/tests/hash:net6,port,net6.t.list0
+===================================================================
+--- ipset.orig/tests/hash:net6,port,net6.t.list0
++++ ipset/tests/hash:net6,port,net6.t.list0
+@@ -3,7 +3,6 @@ Type: hash:net,port,net
+ Header: family inet6 hashsize 1024 maxelem 65536
+ Size in memory: 2440
+ References: 0
+-Number of entries: 4
+ Members:
+ 2:1::,tcp:128,::/12
+ 2:1::1,tcp:128,::/12
+Index: ipset/tests/hash:net6,port.t.list0
+===================================================================
+--- ipset.orig/tests/hash:net6,port.t.list0
++++ ipset/tests/hash:net6,port.t.list0
+@@ -3,7 +3,6 @@ Type: hash:net,port
+ Header: family inet6 hashsize 128 maxelem 65536 timeout x
+ Size in memory: 2352
+ References: 0
+-Number of entries: 5
+ Members:
+ 192:160::/27,ipv6-icmp:echo-request timeout x
+ 192:168:68::95,ipv6-icmp:port-unreachable timeout x
+Index: ipset/tests/hash:net6,port.t.list1
+===================================================================
+--- ipset.orig/tests/hash:net6,port.t.list1
++++ ipset/tests/hash:net6,port.t.list1
+@@ -3,6 +3,5 @@ Type: hash:net,port
+ Header: family inet6 hashsize 128 maxelem 65536 timeout 5
+ Size in memory: 2352
+ References: 0
+-Number of entries: 5
+ Members:
+ 1:1:1::1,tcp:8 timeout 0
+Index: ipset/tests/hash:net6.t.list0
+===================================================================
+--- ipset.orig/tests/hash:net6.t.list0
++++ ipset/tests/hash:net6.t.list0
+@@ -3,7 +3,6 @@ Type: hash:net
+ Header: family inet6 hashsize 128 maxelem 65536 timeout x
+ Size in memory: 2112
+ References: 0
+-Number of entries: 4
+ Members:
+ 192:160::/27 timeout x
+ 1:1:1::1 timeout x
+Index: ipset/tests/hash:net6.t.list1
+===================================================================
+--- ipset.orig/tests/hash:net6.t.list1
++++ ipset/tests/hash:net6.t.list1
+@@ -3,5 +3,4 @@ Type: hash:net
+ Header: family inet6 hashsize 128 maxelem 65536 timeout 5
+ Size in memory: 2112
+ References: 0
+-Number of entries: 4
+ Members:
+Index: ipset/tests/iphash.t.list0
+===================================================================
+--- ipset.orig/tests/iphash.t.list0
++++ ipset/tests/iphash.t.list0
+@@ -3,7 +3,6 @@ Type: hash:ip
+ Header: family inet hashsize 128 maxelem 65536
+ Size in memory: 224
+ References: 0
+-Number of entries: 2
+ Members:
+ 192.168.68.69
+ 2.0.0.1
+Index: ipset/tests/iphash.t.list1
+===================================================================
+--- ipset.orig/tests/iphash.t.list1
++++ ipset/tests/iphash.t.list1
+@@ -3,7 +3,6 @@ Type: hash:ip
+ Header: family inet hashsize 128 maxelem 65536 netmask 24
+ Size in memory: 224
+ References: 0
+-Number of entries: 2
+ Members:
+ 192.168.68.0
+ 2.0.0.0
+Index: ipset/tests/ipmap.t.list0
+===================================================================
+--- ipset.orig/tests/ipmap.t.list0
++++ ipset/tests/ipmap.t.list0
+@@ -1,9 +1,8 @@
+ Name: test
+ Type: bitmap:ip
+ Header: range 2.0.0.1-2.1.0.0
+-Size in memory: 8352
++Size in memory: 8312
+ References: 0
+-Number of entries: 6
+ Members:
+ 2.0.0.1
+ 2.0.0.128
+Index: ipset/tests/ipmap.t.list1
+===================================================================
+--- ipset.orig/tests/ipmap.t.list1
++++ ipset/tests/ipmap.t.list1
+@@ -1,9 +1,8 @@
+ Name: test
+ Type: bitmap:ip
+ Header: range 2.0.0.1-2.1.0.0
+-Size in memory: 8352
++Size in memory: 8312
+ References: 0
+-Number of entries: 2
+ Members:
+ 2.0.0.1
+ 2.1.0.0
+Index: ipset/tests/ipmap.t.list2
+===================================================================
+--- ipset.orig/tests/ipmap.t.list2
++++ ipset/tests/ipmap.t.list2
+@@ -1,9 +1,8 @@
+ Name: test
+ Type: bitmap:ip
+ Header: range 2.0.0.0-2.0.255.255
+-Size in memory: 8352
++Size in memory: 8312
+ References: 0
+-Number of entries: 2
+ Members:
+ 2.0.0.0
+ 2.0.255.255
+Index: ipset/tests/ipmap.t.list3
+===================================================================
+--- ipset.orig/tests/ipmap.t.list3
++++ ipset/tests/ipmap.t.list3
+@@ -1,9 +1,8 @@
+ Name: test
+ Type: bitmap:ip
+ Header: range 10.0.0.0-10.255.255.255 netmask 24
+-Size in memory: 8352
++Size in memory: 8312
+ References: 0
+-Number of entries: 258
+ Members:
+ 10.0.0.0
+ 10.8.0.0
+Index: ipset/tests/ipmap.t.list4
+===================================================================
+--- ipset.orig/tests/ipmap.t.list4
++++ ipset/tests/ipmap.t.list4
+@@ -1,9 +1,8 @@
+ Name: test
+ Type: bitmap:ip
+ Header: range 0.0.0.0-255.255.255.255 netmask 16
+-Size in memory: 8352
++Size in memory: 8312
+ References: 0
+-Number of entries: 2
+ Members:
+ 0.0.0.0
+ 255.255.0.0
+Index: ipset/tests/ipmarkhash.t.list0
+===================================================================
+--- ipset.orig/tests/ipmarkhash.t.list0
++++ ipset/tests/ipmarkhash.t.list0
+@@ -3,7 +3,6 @@ Type: hash:ip,mark
+ Header: family inet markmask 0xffffffff hashsize 1024 maxelem 65536
+ Size in memory: 384
+ References: 0
+-Number of entries: 4
+ Members:
+ 2.0.0.0,0x00000005
+ 2.0.0.1,0x00000005
+Index: ipset/tests/ipmarkhash.t.list1
+===================================================================
+--- ipset.orig/tests/ipmarkhash.t.list1
++++ ipset/tests/ipmarkhash.t.list1
+@@ -3,7 +3,6 @@ Type: hash:ip,mark
+ Header: family inet markmask 0xffffffff hashsize 1024 maxelem 65536
+ Size in memory: 384
+ References: 0
+-Number of entries: 4
+ Members:
+ 1.255.255.255,0x00000005
+ 2.0.0.0,0x00000005
+Index: ipset/tests/ipporthash.t.list0
+===================================================================
+--- ipset.orig/tests/ipporthash.t.list0
++++ ipset/tests/ipporthash.t.list0
+@@ -3,7 +3,6 @@ Type: hash:ip,port
+ Header: family inet hashsize 1024 maxelem 65536
+ Size in memory: 384
+ References: 0
+-Number of entries: 4
+ Members:
+ 2.0.0.0,tcp:5
+ 2.0.0.1,tcp:5
+Index: ipset/tests/ipporthash.t.list1
+===================================================================
+--- ipset.orig/tests/ipporthash.t.list1
++++ ipset/tests/ipporthash.t.list1
+@@ -3,7 +3,6 @@ Type: hash:ip,port
+ Header: family inet hashsize 1024 maxelem 65536
+ Size in memory: 384
+ References: 0
+-Number of entries: 4
+ Members:
+ 1.255.255.255,tcp:5
+ 2.0.0.0,tcp:5
+Index: ipset/tests/ipportiphash.t.list0
+===================================================================
+--- ipset.orig/tests/ipportiphash.t.list0
++++ ipset/tests/ipportiphash.t.list0
+@@ -3,7 +3,6 @@ Type: hash:ip,port,ip
+ Header: family inet hashsize 1024 maxelem 65536
+ Size in memory: 456
+ References: 0
+-Number of entries: 4
+ Members:
+ 2.0.0.0,tcp:5,1.1.1.1
+ 2.0.0.1,tcp:5,1.1.1.1
+Index: ipset/tests/ipportiphash.t.list1
+===================================================================
+--- ipset.orig/tests/ipportiphash.t.list1
++++ ipset/tests/ipportiphash.t.list1
+@@ -3,7 +3,6 @@ Type: hash:ip,port,ip
+ Header: family inet hashsize 1024 maxelem 65536
+ Size in memory: 296
+ References: 0
+-Number of entries: 2
+ Members:
+ 2.0.0.0,tcp:5,1.1.1.1
+ 2.0.255.255,tcp:128,2.2.2.2
+Index: ipset/tests/iptree.t.list0
+===================================================================
+--- ipset.orig/tests/iptree.t.list0
++++ ipset/tests/iptree.t.list0
+@@ -1,7 +1,7 @@
+ Name: test
+ Type: hash:ip
+ Header: family inet hashsize 1024 maxelem 65536
+-Size in memory: 8352
++Size in memory: 8312
+ References: 0
+ Members:
+ 192.168.68.69
+Index: ipset/tests/macipmap.t.list0
+===================================================================
+--- ipset.orig/tests/macipmap.t.list0
++++ ipset/tests/macipmap.t.list0
+@@ -3,7 +3,6 @@ Type: bitmap:ip,mac
+ Header: range 2.0.0.1-2.1.0.0
+ Size in memory: 532632
+ References: 0
+-Number of entries: 3
+ Members:
+ 2.0.0.1,00:11:22:33:44:56
+ 2.0.0.2,00:11:22:33:44:55
+Index: ipset/tests/macipmap.t.list1
+===================================================================
+--- ipset.orig/tests/macipmap.t.list1
++++ ipset/tests/macipmap.t.list1
+@@ -3,7 +3,6 @@ Type: bitmap:ip,mac
+ Header: range 2.0.0.0-2.0.255.255
+ Size in memory: 532632
+ References: 0
+-Number of entries: 3
+ Members:
+ 2.0.0.0
+ 2.0.0.2,00:11:22:33:44:55
+Index: ipset/tests/macipmap.t.list2
+===================================================================
+--- ipset.orig/tests/macipmap.t.list2
++++ ipset/tests/macipmap.t.list2
+@@ -3,6 +3,5 @@ Type: bitmap:ip,mac
+ Header: range 2.0.0.1-2.1.0.0 timeout x
+ Size in memory: 1056920
+ References: 0
+-Number of entries: 1
+ Members:
+ 2.1.0.0 timeout x
+Index: ipset/tests/macipmap.t.list3
+===================================================================
+--- ipset.orig/tests/macipmap.t.list3
++++ ipset/tests/macipmap.t.list3
+@@ -3,7 +3,6 @@ Type: bitmap:ip,mac
+ Header: range 2.0.0.1-2.1.0.0 timeout x
+ Size in memory: 1056920
+ References: 0
+-Number of entries: 3
+ Members:
+ 2.0.0.1,00:11:22:33:44:56 timeout x
+ 2.0.0.2,00:11:22:33:44:55 timeout x
+Index: ipset/tests/nethash.t.list0
+===================================================================
+--- ipset.orig/tests/nethash.t.list0
++++ ipset/tests/nethash.t.list0
+@@ -3,7 +3,6 @@ Type: hash:net
+ Header: family inet hashsize 128 maxelem 65536
+ Size in memory: 640
+ References: 0
+-Number of entries: 4
+ Members:
+ 1.1.1.1
+ 192.168.68.64/27
+Index: ipset/tests/portmap.t.list0
+===================================================================
+--- ipset.orig/tests/portmap.t.list0
++++ ipset/tests/portmap.t.list0
+@@ -3,7 +3,6 @@ Type: bitmap:port
+ Header: range 1-1024
+ Size in memory: 276
+ References: 0
+-Number of entries: 2
+ Members:
+ 1
+ 1024
+Index: ipset/tests/portmap.t.list1
+===================================================================
+--- ipset.orig/tests/portmap.t.list1
++++ ipset/tests/portmap.t.list1
+@@ -3,7 +3,6 @@ Type: bitmap:port
+ Header: range 0-65535
+ Size in memory: 8340
+ References: 0
+-Number of entries: 2
+ Members:
+ 0
+ 65535
+Index: ipset/tests/portmap.t.list2
+===================================================================
+--- ipset.orig/tests/portmap.t.list2
++++ ipset/tests/portmap.t.list2
+@@ -3,7 +3,6 @@ Type: bitmap:port
+ Header: range 0-65535 timeout x
+ Size in memory: 532628
+ References: 0
+-Number of entries: 2
+ Members:
+ 0 timeout x
+ 65535 timeout x
+Index: ipset/tests/portmap.t.list3
+===================================================================
+--- ipset.orig/tests/portmap.t.list3
++++ ipset/tests/portmap.t.list3
+@@ -3,7 +3,6 @@ Type: bitmap:port
+ Header: range 0-65535 timeout x
+ Size in memory: 532628
+ References: 0
+-Number of entries: 2
+ Members:
+ 0 timeout x
+ 65535 timeout x
+Index: ipset/tests/restore.t.list0
+===================================================================
+--- ipset.orig/tests/restore.t.list0
++++ ipset/tests/restore.t.list0
+@@ -3,7 +3,6 @@ Type: hash:ip
+ Header: family inet6 hashsize 1024 maxelem 65536
+ Size in memory: 416
+ References: 0
+-Number of entries: 3
+ Members:
+ 3::3
+ 4::4
+Index: ipset/tests/restore.t.list1
+===================================================================
+--- ipset.orig/tests/restore.t.list1
++++ ipset/tests/restore.t.list1
+@@ -3,7 +3,6 @@ Type: hash:ip
+ Header: family inet6 hashsize 1024 maxelem 65536
+ Size in memory: 416
+ References: 0
+-Number of entries: 3
+ Members:
+ 1::1
+ 2::2
+Index: ipset/tests/setlist.t.list0
+===================================================================
+--- ipset.orig/tests/setlist.t.list0
++++ ipset/tests/setlist.t.list0
+@@ -3,7 +3,6 @@ Type: list:set
+ Header: size 8
+ Size in memory: 224
+ References: 0
+-Number of entries: 2
+ Members:
+ foo
+ bar
+Index: ipset/tests/setlist.t.list1
+===================================================================
+--- ipset.orig/tests/setlist.t.list1
++++ ipset/tests/setlist.t.list1
+@@ -3,7 +3,6 @@ Type: list:set
+ Header: size 8
+ Size in memory: 264
+ References: 0
+-Number of entries: 3
+ Members:
+ a
+ b
+Index: ipset/tests/setlist.t.list2
+===================================================================
+--- ipset.orig/tests/setlist.t.list2
++++ ipset/tests/setlist.t.list2
+@@ -3,7 +3,6 @@ Type: list:set
+ Header: size 8
+ Size in memory: 224
+ References: 0
+-Number of entries: 2
+ Members:
+ a
+ c
+Index: ipset/tests/setlist.t.list3
+===================================================================
+--- ipset.orig/tests/setlist.t.list3
++++ ipset/tests/setlist.t.list3
+@@ -3,6 +3,5 @@ Type: list:set
+ Header: size 8
+ Size in memory: 184
+ References: 0
+-Number of entries: 1
+ Members:
+ a
+Index: ipset/tests/setlist.t.list4
+===================================================================
+--- ipset.orig/tests/setlist.t.list4
++++ ipset/tests/setlist.t.list4
+@@ -3,7 +3,6 @@ Type: hash:ip
+ Header: family inet hashsize 1024 maxelem 65536
+ Size in memory: 152
+ References: 1
+-Number of entries: 0
+ Members:
+ 
+ Name: b
+@@ -11,7 +10,6 @@ Type: hash:ip
+ Header: family inet hashsize 1024 maxelem 65536
+ Size in memory: 152
+ References: 0
+-Number of entries: 0
+ Members:
+ 
+ Name: c
+@@ -19,7 +17,6 @@ Type: hash:ip
+ Header: family inet hashsize 1024 maxelem 65536
+ Size in memory: 152
+ References: 0
+-Number of entries: 0
+ Members:
+ 
+ Name: d
+@@ -27,7 +24,6 @@ Type: hash:ip
+ Header: family inet hashsize 1024 maxelem 65536
+ Size in memory: 152
+ References: 0
+-Number of entries: 0
+ Members:
+ 
+ Name: test
+@@ -35,6 +31,5 @@ Type: list:set
+ Header: size 8
+ Size in memory: 184
+ References: 0
+-Number of entries: 1
+ Members:
+ a
+Index: ipset/tests/sort.sh
+===================================================================
+--- ipset.orig/tests/sort.sh
++++ ipset/tests/sort.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+ 
+-head -n 7 $1 > .foo
+-tail -n +8 $1 | grep  '[[:alnum:]]' | sort >> .foo
++head -n 6 $1 > .foo
++tail -n +7 $1 | grep  '[[:alnum:]]' | sort >> .foo
+ rm $1
